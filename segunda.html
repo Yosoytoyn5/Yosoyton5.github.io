@@ -54,18 +54,18 @@
 <body>
 
     <button onclick="solicitarPermisos()">Escanear QR</button>
+    <button onclick="cerrarCamara()">Cerrar Cámara</button>
     <div id="qr-reader"></div>
     <p id="resultado"></p>
 
     <script>
         let qrReader;
+        let cameraStream;
 
         async function solicitarPermisos() {
             try {
                 // Solicitar permiso de cámara
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-                stream.getTracks().forEach(track => track.stop()); // Detener stream después de obtener permisos
-                
+                cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
                 iniciarEscaneo(); // Iniciar escaneo si se otorgaron permisos
             } catch (err) {
                 alert("Permiso de cámara denegado o no disponible.");
@@ -94,6 +94,16 @@
                     console.warn("Error de escaneo:", errorMessage);
                 }
             ).catch(err => console.error("Error al iniciar el escáner:", err));
+        }
+
+        function cerrarCamara() {
+            if (cameraStream) {
+                // Detener todas las pistas del stream de la cámara
+                cameraStream.getTracks().forEach(track => track.stop());
+                const qrElement = document.getElementById('qr-reader');
+                qrElement.style.display = 'none';
+                document.getElementById("resultado").innerText = "";
+            }
         }
     </script>
 
