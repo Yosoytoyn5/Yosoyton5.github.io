@@ -53,12 +53,25 @@
 </head>
 <body>
 
-    <button onclick="iniciarEscaneo()">Escanear QR</button>
+    <button onclick="solicitarPermisos()">Escanear QR</button>
     <div id="qr-reader"></div>
     <p id="resultado"></p>
 
     <script>
         let qrReader;
+
+        async function solicitarPermisos() {
+            try {
+                // Solicitar permiso de cámara
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                stream.getTracks().forEach(track => track.stop()); // Detener stream después de obtener permisos
+                
+                iniciarEscaneo(); // Iniciar escaneo si se otorgaron permisos
+            } catch (err) {
+                alert("Permiso de cámara denegado o no disponible.");
+                console.error("Error al solicitar permisos:", err);
+            }
+        }
 
         function iniciarEscaneo() {
             const qrElement = document.getElementById('qr-reader');
