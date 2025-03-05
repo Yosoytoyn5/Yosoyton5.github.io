@@ -3,109 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escáner QR</title>
-    <script src="https://unpkg.com/html5-qrcode"></script>
+    <title>Imagen de Fondo Difuminada</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
         body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            text-align: center;
-            font-family: Arial, sans-serif;
-            background-color: black;
-            color: white;
-            padding: 20px;
+            margin: 0;
+            height: 100vh;
+            position: relative;
         }
-        #qr-reader {
+
+        /* Pseudo-elemento para el fondo difuminado */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 400px;
+            height: 100%;
+            background-image: url('https://www.dzoom.org.es/wp-content/uploads/2010/09/retrato-fondo-profundidad-campo-734x489.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            filter: blur(8px); /* Aplica el desenfoque */
+            z-index: -1; /* Asegura que el fondo esté detrás del contenido */
+        }
+
+        h1, p {
+            position: relative;
+            z-index: 1; /* Asegura que el texto esté por encima del fondo */
+            color: white; /* Cambia el color del texto para que sea visible */
+            text-align: center;
             margin-top: 20px;
-            display: none;
-        }
-        button {
-            padding: 12px 20px;
-            font-size: 18px;
-            border: none;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #resultado {
-            margin-top: 15px;
-            font-size: 18px;
-            word-wrap: break-word;
-            max-width: 90%;
         }
     </style>
 </head>
 <body>
-
-    <button onclick="solicitarPermisos()">Escanear QR</button>
-    <button onclick="cerrarCamara()">Cerrar Cámara</button>
-    <div id="qr-reader"></div>
-    <p id="resultado"></p>
-
-    <script>
-        let qrReader;
-        let cameraStream;
-
-        async function solicitarPermisos() {
-            try {
-                // Solicitar permiso de cámara
-                cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-                iniciarEscaneo(); // Iniciar escaneo si se otorgaron permisos
-            } catch (err) {
-                alert("Permiso de cámara denegado o no disponible.");
-                console.error("Error al solicitar permisos:", err);
-            }
-        }
-
-        function iniciarEscaneo() {
-            const qrElement = document.getElementById('qr-reader');
-            qrElement.style.display = 'block';
-
-            if (!qrReader) {
-                qrReader = new Html5Qrcode("qr-reader");
-            }
-
-            qrReader.start(
-                { facingMode: "environment" }, 
-                { fps: 10, qrbox: function(viewfinderWidth, viewfinderHeight) {
-                    return Math.min(viewfinderWidth, viewfinderHeight) * 0.7;
-                }},
-                (decodedText) => {
-                    document.getElementById("resultado").innerText = "Código QR: " + decodedText;
-                    qrReader.stop().then(() => qrElement.style.display = 'none');
-                },
-                (errorMessage) => {
-                    console.warn("Error de escaneo:", errorMessage);
-                }
-            ).catch(err => console.error("Error al iniciar el escáner:", err));
-        }
-
-        function cerrarCamara() {
-            if (cameraStream) {
-                // Detener todas las pistas del stream de la cámara
-                cameraStream.getTracks().forEach(track => track.stop());
-                const qrElement = document.getElementById('qr-reader');
-                qrElement.style.display = 'none';
-                document.getElementById("resultado").innerText = "";
-            }
-        }
-    </script>
-
+    <h1>Kaerim Music</h1>
 </body>
 </html>
