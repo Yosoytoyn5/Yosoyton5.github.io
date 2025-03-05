@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: #d11818;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -15,7 +15,7 @@
             margin: 0;
         }
         .audio-container {
-            background: #fff;
+            background: #8d4949;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -24,19 +24,20 @@
             align-items: center;
             justify-content: center;
             width: 320px;
+            display: none; /* Inicialmente oculto */
         }
         .play-btn {
-            background-color: #4CAF50;
-            color: white;
+            width: 200px; /* Tamaño de la portada */
+            height: 200px; /* Tamaño de la portada */
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-        .play-btn:hover {
-            background-color: #45a049;
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-6ihTplHTFbwKX5SPZ4FcTtBwMeOVT7-anbdumB-lx-1wjDhOd-C5pKYp0nPvV6_qZjQ&usqp=CAU');
+            background-size: cover;
+            background-position: center;
+            position: absolute; /* Para que esté en la esquina */
+            top: 20px; /* Ajusta la distancia desde la parte superior */
+            left: 20px; /* Ajusta la distancia desde la parte izquierda */
         }
         .progress-container {
             width: 100%;
@@ -46,7 +47,7 @@
             width: 100%;
             height: 5px;
             border-radius: 5px;
-            background-color: #ddd;
+            background-color: #fafafa;
         }
         .progress-bar {
             height: 100%;
@@ -54,35 +55,54 @@
             background-color: #4CAF50;
             border-radius: 5px;
         }
-        .album-cover {
-            width: 100px;
-            height: 100px;
-            background-color: #ccc;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            background-image: url('https://via.placeholder.com/100'); /* Reemplaza con la URL de la portada de tu canción */
-            background-size: cover;
-            background-position: center;
+        .song-info {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .song-info h3, .song-info p {
+            margin: 0;
         }
     </style>
 </head>
 <body>
-    <div class="audio-container">
+    <button id="sainNtBtn" class="play-btn" onclick="showPlayer()"> </button> <!-- Ahora es una imagen de portada -->
+
+    <div class="audio-container" id="audioContainer">
         <div class="album-cover"></div>
-        <button class="play-btn" onclick="playAudio()">Reproducir</button>
+        <button id="playPauseBtn" class="play-btn" onclick="togglePlayPause()">Reproducir</button>
         <div class="progress-container">
             <div class="progress">
                 <div id="progress-bar" class="progress-bar"></div>
             </div>
+        </div>
+        <div class="song-info">
+            <h3>Sain Nt</h3>
+            <p>Oye Bebe</p>
         </div>
     </div>
 
     <script>
         let audio = new Audio('https://www.cjoint.com/doc/24_10/NJAsIFmkU1f_Oye-bebe-Sain-Nt-Kerim-Music.mp3');
         const progressBar = document.getElementById('progress-bar');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const audioContainer = document.getElementById('audioContainer');
+        const sainNtBtn = document.getElementById('sainNtBtn');
 
-        function playAudio() {
-            audio.play();
+        // Función para mostrar el reproductor y ocultar la portada
+        function showPlayer() {
+            audioContainer.style.display = 'flex'; // Mostrar el reproductor
+            sainNtBtn.style.display = 'none'; // Ocultar la portada
+        }
+
+        // Función para alternar entre reproducir y pausar
+        function togglePlayPause() {
+            if (audio.paused) {
+                audio.play();
+                playPauseBtn.textContent = "Pausar";
+            } else {
+                audio.pause();
+                playPauseBtn.textContent = "Reproducir";
+            }
         }
 
         audio.addEventListener('timeupdate', () => {
