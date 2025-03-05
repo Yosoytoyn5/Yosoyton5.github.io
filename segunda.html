@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botón Animado</title>
+    <style>
+        /* Estilos para el botón */
+        .btn-animado {
+            background-color: #000000;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: absolute;
+            bottom: 20px;  /* Ajusta la distancia desde la parte inferior */
+            right: 20px;   /* Ajusta la distancia desde la parte derecha */
+        }
+
+        /* Efecto al pasar el mouse */
+        .btn-animado:hover {
+            transform: scale(1.1);  /* Aumenta el tamaño del botón */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);  /* Añade sombra */
+        }
+
+        /* Efecto al hacer clic */
+        .btn-animado:active {
+            transform: scale(0.9);  /* Hace el botón más pequeño */
+        }
+
+        /* Centrar el contenido en la pantalla */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            position: relative; /* Necesario para que el posicionamiento absoluto funcione */
+            flex-direction: column;
+        }
+
+        /* Animación de desaparición */
+        .ocultar {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Estilos para el formulario flotante */
+        .formulario {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            position: fixed; /* Lo hace flotante */
+            bottom: 80px; /* Ajusta la distancia desde la parte inferior */
+            right: 20px; /* Ajusta la distancia desde la parte derecha */
+            opacity: 0; /* Oculto inicialmente */
+            pointer-events: none; /* Evita interactuar con el formulario cuando está oculto */
+            transition: opacity 0.5s ease, pointer-events 0.5s ease;
+        }
+
+        /* Cuando el formulario está visible */
+        .formulario.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .formulario input,
+        .formulario textarea,
+        .formulario button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+
+        .formulario textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .formulario button {
+            background-color: #000000;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .formulario button:hover {
+            background-color: #444444;
+        }
+
+        /* Estilos para el historial */
+        .historial {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .entrada {
+            background-color: #fff;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .entrada button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .entrada button:hover {
+            background-color: #ff3333;
+        }
+
+        /* Media queries para hacer la página responsiva */
+        @media (max-width: 768px) {
+            .formulario {
+                max-width: 90%;
+                padding: 15px;
+            }
+
+            .btn-animado {
+                font-size: 14px;
+                padding: 12px 25px;
+            }
+
+            .historial {
+                max-width: 90%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .formulario {
+                max-width: 95%;
+                padding: 10px;
+            }
+
+            .btn-animado {
+                font-size: 12px;
+                padding: 10px 20px;
+            }
+
+            .historial {
+                max-width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <form class="formulario" id="formulario">
+        <input type="text" id="nombre" placeholder="Nombre" required>
+        <textarea id="descripcion" placeholder="Descripción" required></textarea>
+        <input type="date" id="fecha" required>
+        <button type="submit">Guardar</button>
+    </form>
+
+    <button class="btn-animado" id="miBoton">Agendar</button>
+
+    <!-- Sección de historial de entradas -->
+    <div class="historial" id="historial">
+        <h3>HISTORIAL</h3>
+    </div>
+
+    <script>
+        const formulario = document.getElementById('formulario');
+        const historial = document.getElementById('historial');
+        const miBoton = document.getElementById('miBoton');
+
+        // Función para cargar el historial desde el localStorage
+        function cargarHistorial() {
+            const historialGuardado = JSON.parse(localStorage.getItem('historial')) || [];
+            historialGuardado.forEach(entrada => {
+                const nuevaEntrada = document.createElement('div');
+                nuevaEntrada.classList.add('entrada');
+                nuevaEntrada.innerHTML = `
+                    <p><strong>Nombre:</strong> ${entrada.nombre} <br> <strong>Descripción:</strong> ${entrada.descripcion} <br> <strong>Fecha:</strong> ${entrada.fecha}</p>
+                    <button class="eliminar">Eliminar</button>
+                `;
+                historial.appendChild(nuevaEntrada);
+            });
+        }
+
+        // Manejar el clic del botón Agendar
+        miBoton.addEventListener('click', function() {
+            formulario.classList.toggle('visible'); // Mostrar u ocultar formulario
+        });
+
+        // Manejar el envío del formulario
+        formulario.addEventListener('submit', function(event) {
+            event.preventDefault(); // Evitar el envío del formulario
+
+            // Obtener los valores del formulario
+            const nombre = document.getElementById('nombre').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const fecha = document.getElementById('fecha').value;
+
+            // Crear una nueva entrada para mostrar en el historial
+            const nuevaEntrada = {
+                nombre: nombre,
+                descripcion: descripcion,
+                fecha: fecha
+            };
+
+            // Obtener historial actual y agregar la nueva entrada
+            const historialGuardado = JSON.parse(localStorage.getItem('historial')) || [];
+            historialGuardado.push(nuevaEntrada);
+
+            // Guardar el historial actualizado en el localStorage
+            localStorage.setItem('historial', JSON.stringify(historialGuardado));
+
+            // Crear el elemento para mostrar la nueva entrada en la interfaz
+            const nuevaEntradaElemento = document.createElement('div');
+            nuevaEntradaElemento.classList.add('entrada');
+            nuevaEntradaElemento.innerHTML = `
+                <p><strong>Nombre:</strong> ${nombre} <br> <strong>Descripción:</strong> ${descripcion} <br> <strong>Fecha:</strong> ${fecha}</p>
+                <button class="eliminar">Eliminar</button>
+            `;
+
+            // Agregar la nueva entrada al historial en la interfaz
+            historial.appendChild(nuevaEntradaElemento);
+
+            // Limpiar el formulario después del envío
+            formulario.reset();
+            formulario.classList.remove('visible'); // Ocultar el formulario después del envío
+        });
+
+        // Manejar el evento de eliminar
+        historial.addEventListener('click', function(event) {
+            if (event.target.classList.contains('eliminar')) {
+                const entradaElemento = event.target.parentElement;
+                const nombreEliminar = entradaElemento.querySelector('p').innerText.split("\n")[0].split(":")[1].trim();
+
+                // Eliminar la entrada del localStorage
+                let historialGuardado = JSON.parse(localStorage.getItem('historial')) || [];
+                historialGuardado = historialGuardado.filter(entrada => entrada.nombre !== nombreEliminar);
+                localStorage.setItem('historial', JSON.stringify(historialGuardado));
+
+                // Eliminar la entrada de la interfaz
+                entradaElemento.remove();
+            }
+        });
+
+        // Cargar el historial al cargar la página
+        cargarHistorial();
+    </script>
+</body>
+</html>
