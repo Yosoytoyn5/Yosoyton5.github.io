@@ -6,7 +6,7 @@
     <title>Formulario</title>
     <style>
         body {
-            background-color: #f0f0f0;
+            background-color: #000000; /* Cambié el color de fondo a negro */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -14,6 +14,8 @@
             margin: 0;
             flex-direction: column;
             text-align: center;
+            padding: 10px;
+            color: white; /* Cambié el color del texto a blanco para que sea visible sobre el fondo negro */
         }
 
         form {
@@ -21,13 +23,17 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
         }
 
         input {
             margin-top: 10px;
-            padding: 8px;
+            padding: 10px;
             width: 100%;
             box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
             transition: box-shadow 0.3s ease;
         }
 
@@ -45,6 +51,13 @@
             }
         }
 
+        label {
+            font-size: 1.2rem;
+            font-weight: bold;
+            animation: titleAnimation 2s infinite;
+            display: block;
+        }
+
         @keyframes titleAnimation {
             0% {
                 transform: scale(1);
@@ -60,12 +73,6 @@
             }
         }
 
-        label {
-            font-size: 1.2rem;
-            font-weight: bold;
-            animation: titleAnimation 2s infinite;
-        }
-
         button {
             margin-top: 10px;
             padding: 10px;
@@ -75,6 +82,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 1rem;
         }
 
         button:hover {
@@ -83,10 +91,12 @@
 
         .limpiar {
             background: #dc3545;
-            padding: 5px 15px;
-            width: auto;
+            padding: 5px 10px; /* Reduje el tamaño de padding */
+            width: auto; /* Hace que el ancho se ajuste al contenido */
             margin: 20px auto;
-            display: block;
+            display: inline-block; /* Cambié de block a inline-block para que se ajuste al contenido */
+            font-size: 0.8rem; /* Reducido el tamaño de la fuente */
+            border-radius: 5px;
         }
 
         .limpiar:hover {
@@ -106,63 +116,49 @@
             display: none;
         }
 
+        /* Estilo para la ventana modal */
+        #opcionesEliminar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modalContent {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 80%;
+            max-width: 400px;
+            max-height: 70vh; /* Establece la altura máxima del contenedor */
+            overflow-y: auto; /* Permite el desplazamiento vertical */
+        }
+
         .eliminar {
             background: #dc3545;
             color: white;
             border: none;
             padding: 5px 10px;
             cursor: pointer;
+            font-size: 1rem;
         }
 
         .eliminar:hover {
             background: #c82333;
         }
 
-        /* Estilo para la ventana modal */
-#opcionesEliminar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
-    display: none;
-    justify-content: center;
-    align-items: center;
-}
-
-.modalContent {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    width: 300px;
-    max-height: 70vh; /* Establece la altura máxima del contenedor */
-    overflow-y: auto; /* Permite el desplazamiento vertical */
-    scrollbar-width: thin; /* Cambia el tamaño de la barra de desplazamiento */
-    scrollbar-color: #007bff #f0f0f0; /* Cambia el color del deslizable */
-}
-
-/* Para navegadores Webkit (como Chrome, Safari) */
-.modalContent::-webkit-scrollbar {
-    width: 8px; /* Ancho del deslizable */
-}
-
-.modalContent::-webkit-scrollbar-thumb {
-    background-color: #007bff; /* Color del deslizable */
-    border-radius: 4px; /* Bordes redondeados */
-}
-
-.modalContent::-webkit-scrollbar-track {
-    background-color: #f0f0f0; /* Color del fondo del deslizable */
-}
-
         /* Estilo para el contenedor del historial */
         #datosGuardados {
             margin-top: 20px;
-            max-height: 200px; /* Altura máxima para el área de desplazamiento */
-            overflow-y: auto; /* Desplazamiento vertical */
+            max-height: 200px;
+            overflow-y: auto;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -170,6 +166,20 @@
             margin: 20px auto;
         }
 
+        /* Media Queries para hacer la página responsiva */
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+
+            .modalContent {
+                width: 90%;
+            }
+
+            .limpiar {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
