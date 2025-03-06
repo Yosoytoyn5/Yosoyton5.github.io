@@ -3,108 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fondo de Imagen</title>
+    <title>Formulario</title>
     <style>
         body {
-            background-image: url('https://blogscvc.cervantes.es/martes-neologico/wp-content/uploads/sites/2/2021/08/gif_500.gif');
-            background-size: contain; /* Ajusta la imagen al tamaño de la ventana */
-            background-position: center; /* Centra la imagen */
-            background-repeat: no-repeat; /* Evita que la imagen se repita */
-            background-attachment: fixed; /* Hace que la imagen se quede fija mientras haces scroll */
-            color: white; /* Asegura que el texto sea visible sobre la imagen */
-            margin: 0; /* Elimina el margen por defecto */
-            height: 100vh; /* Asegura que el body tenga el 100% de la altura de la ventana */
+            background-color: #f0f0f0;
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-
-        /* Estilos para el formulario */
-        #formulario {
-            display: none; /* Lo ocultamos inicialmente */
-            position: absolute;
-            top: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgb(255, 0, 0);
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            z-index: 10;
-        }
-
-        /* Estilo para el botón flotante */
-        #btn-flotante {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        /* Estilo para cuando el formulario está visible */
-        #formulario.visible {
-            display: block;
-        }
-
-        #formulario {
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
             text-align: center;
         }
-
-        .btn-guardar {
-            background-color: #ff0404; /* Color de fondo */
-            color: white; /* Color del texto */
-            padding: 10px 30px; /* Espaciado interno */
-            border: none; /* Sin borde */
-            border-radius: 30px; /* Bordes redondeados */
-            cursor: pointer; /* Cambiar cursor a mano */
-            font-size: 16px; /* Tamaño de fuente */
-            transition: background-color 0.3s ease; /* Transición suave */
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
-        .btn-guardar:hover {
-            background-color: #10110e; /* Color de fondo al pasar el cursor */
+        input {
+            margin-top: 10px;
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            width: 100%;
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .limpiar {
+            background: #dc3545;
+            padding: 5px 15px; /* Tamaño reducido */
+            width: auto; /* No ocupa todo el ancho */
+            margin: 20px auto; /* Centrado horizontal */
+            display: block; /* Hace que el botón sea un bloque */
+        }
+        .limpiar:hover {
+            background: #c82333;
+        }
+        /* Estilos para la notificación flotante */
+        .notificacion {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            display: none;
         }
     </style>
 </head>
 <body>
+    <form id="formulario">
+        <label for="nombre">Nombre Completo:</label>
+        <input type="text" id="nombre" name="nombre" required>
+        <button type="button" onclick="guardar()">Guardar</button>
+    </form>
 
-    <button id="btn-flotante">+</button>
+    <div id="datosGuardados">
+        <!-- Aquí se mostrarán los datos guardados -->
+    </div>
 
-    <div id="formulario">
-        <h2>PRESUME TU MUSICA</h2>
-        <form action="guardar_musica.php" method="POST">
-            <label for="artista">Nombre del Artista:</label>
-            <input type="text" id="artista" name="artista" required><br><br>
-    
-            <label for="titulo">Título de la Canción:</label>
-            <input type="text" id="titulo" name="titulo" required><br><br>
-    
-            <label for="url_audio">URL del Audio:</label>
-            <input type="url" id="url_audio" name="url_audio" required><br><br>
-    
-            <label for="url_portada">URL de la Portada:</label>
-            <input type="url" id="url_portada" name="url_portada" required><br><br>
-    
-            <button type="submit" class="btn-guardar">Guardar</button>
-        </form>
+    <button class="limpiar" onclick="limpiarHistorial()">Limpiar Historial</button>
+
+    <div id="notificacion" class="notificacion">
+        ¡Se guardó con éxito!
     </div>
 
     <script>
-        // Obtener el botón y el formulario
-        const btnFlotante = document.getElementById('btn-flotante');
-        const formulario = document.getElementById('formulario');
+        // Función para guardar los datos en localStorage
+function guardar() {
+    var nombre = document.getElementById('nombre').value;
 
-        // Añadir el evento click al botón flotante
-        btnFlotante.addEventListener('click', function() {
-            formulario.classList.toggle('visible'); // Toggle la visibilidad del formulario
-        });
+    if (nombre) {
+        // Recuperamos el historial de nombres (si existe) o inicializamos un array vacío
+        var historial = JSON.parse(localStorage.getItem('historial')) || [];
+        // Agregamos el nuevo nombre al inicio del historial
+        historial.unshift(nombre); // Cambié 'push' por 'unshift'
+        // Guardamos el historial actualizado en localStorage
+        localStorage.setItem('historial', JSON.stringify(historial));
+
+        // Mostrar la notificación flotante
+        var notificacion = document.getElementById('notificacion');
+        notificacion.style.display = 'block';
+
+        // Ocultar la notificación después de 3 segundos
+        setTimeout(function() {
+            notificacion.style.display = 'none';
+        }, 3000);
+
+        // Mostrar el historial actualizado
+        mostrarDatos();
+
+        // Limpiar el formulario
+        document.getElementById('nombre').value = '';
+    } else {
+        alert('Por favor, ingresa tu nombre.');
+    }
+}
+
+
+
+        // Función para limpiar el historial
+        function limpiarHistorial() {
+            localStorage.removeItem('historial');
+            mostrarDatos(); // Actualizamos la visualización del historial
+        }
+
+        // Función para mostrar los datos guardados
+        function mostrarDatos() {
+            var historial = JSON.parse(localStorage.getItem('historial')) || [];
+            var datosDiv = document.getElementById('datosGuardados');
+            if (historial.length > 0) {
+                var lista = '<ul>';
+                historial.forEach(function(nombre) {
+                    lista += `<li>${nombre}</li>`;
+                });
+                lista += '</ul>';
+                datosDiv.innerHTML = `<p>Historial de nombres guardados:</p>` + lista;
+            } else {
+                datosDiv.innerHTML = '<p>No hay nombres guardados.</p>';
+            }
+        }
+
+        // Mostrar los datos guardados si ya existen al cargar la página
+        window.onload = mostrarDatos;
     </script>
-
 </body>
 </html>
