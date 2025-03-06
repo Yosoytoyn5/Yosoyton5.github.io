@@ -3,339 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subir Música</title>
+    <title>Fondo de Imagen</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
+            background-image: url('https://blogscvc.cervantes.es/martes-neologico/wp-content/uploads/sites/2/2021/08/gif_500.gif');
+            background-size: contain; /* Ajusta la imagen al tamaño de la ventana */
+            background-position: center; /* Centra la imagen */
+            background-repeat: no-repeat; /* Evita que la imagen se repita */
+            background-attachment: fixed; /* Hace que la imagen se quede fija mientras haces scroll */
+            color: white; /* Asegura que el texto sea visible sobre la imagen */
+            margin: 0; /* Elimina el margen por defecto */
+            height: 100vh; /* Asegura que el body tenga el 100% de la altura de la ventana */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        h2 {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        form {
-            width: 90%;
-            max-width: 600px;
-            margin: 20px auto;
-            background-color: white;
+        /* Estilos para el formulario */
+        #formulario {
+            display: none; /* Lo ocultamos inicialmente */
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgb(255, 0, 0);
             padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 10;
         }
 
-        form label {
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        form input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        form button {
-            width: 100%;
-            padding: 12px;
-            background-color: #050505;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        form button:hover {
-            background-color: #45a049;
-        }
-
-        /* Reproductor de música flotante moderno */
-        #audioPlayerContainer {
+        /* Estilo para el botón flotante */
+        #btn-flotante {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 15px;
-            border-radius: 10px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            width: 320px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        #audioPlayerContainer audio {
-            width: 100%;
-            border-radius: 10px;
-        }
-
-        #audioPlayerContainer .controls {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            align-items: center;
-            margin-top: 10px;
-        }
-
-        #audioPlayerContainer .controls button {
-            background-color: transparent;
-            border: none;
-            color: rgb(226, 38, 38);
-            font-size: 18px;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        #audioPlayerContainer .controls button:hover {
-            color: #45a049;
-        }
-
-        #progressBar {
-            width: 100%;
-            height: 5px;
-            background-color: #555;
-            margin-top: 5px;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        #progressBarFilled {
-            height: 100%;
-            background-color: #45a049;
-            width: 0%;
-        }
-
-        #time {
+            background-color: #007BFF;
             color: white;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        #closePlayer {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background-color: transparent;
             border: none;
-            color: rgb(177, 78, 78);
-            font-size: 18px;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 24px;
             cursor: pointer;
         }
 
-        #closePlayer:hover {
-            color: #e74c3c;
+        /* Estilo para cuando el formulario está visible */
+        #formulario.visible {
+            display: block;
         }
 
-        /* Transiciones y efectos */
-        #audioPlayerContainer.fadeIn {
-            animation: fadeIn 0.5s ease-out forwards;
+        #formulario {
+            text-align: center;
         }
 
-        #audioPlayerContainer.fadeOut {
-            animation: fadeOut 0.5s ease-in forwards;
+        .btn-guardar {
+            background-color: #ff0404; /* Color de fondo */
+            color: white; /* Color del texto */
+            padding: 10px 30px; /* Espaciado interno */
+            border: none; /* Sin borde */
+            border-radius: 30px; /* Bordes redondeados */
+            cursor: pointer; /* Cambiar cursor a mano */
+            font-size: 16px; /* Tamaño de fuente */
+            transition: background-color 0.3s ease; /* Transición suave */
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-        }
-
-        /* Media Queries */
-        @media (max-width: 768px) {
-            #audioPlayerContainer {
-                width: 100%;
-                bottom: 10px;
-                right: 10px;
-            }
+        .btn-guardar:hover {
+            background-color: #10110e; /* Color de fondo al pasar el cursor */
         }
     </style>
 </head>
 <body>
-    <h2>Subir Música</h2>
-    <form id="musicForm">
-        <label for="artist">Nombre del artista:</label>
-        <input type="text" id="artist" name="artist" required><br><br>
 
-        <label for="songTitle">Título de la canción:</label>
-        <input type="text" id="songTitle" name="songTitle" required><br><br>
+    <button id="btn-flotante">+</button>
 
-        <label for="songUrl">URL del tema:</label>
-        <input type="url" id="songUrl" name="songUrl" required><br><br>
-
-        <label for="coverUrl">URL de la portada:</label>
-        <input type="url" id="coverUrl" name="coverUrl" required><br><br>
-
-        <button type="submit">Guardar</button>
-    </form>
-
-    <div id="songsList"></div>
-
-    <!-- Reproductor de música flotante -->
-    <div id="audioPlayerContainer">
-        <audio id="audioPlayer" controls>
-            <source id="audioSource" src="" type="audio/mpeg">
-            Tu navegador no soporta el elemento de audio.
-        </audio>
-        <div id="progressBar">
-            <div id="progressBarFilled"></div>
-        </div>
-        <div class="controls">
-            <button id="prevSong">&#9664;</button> <!-- Icono de regresar -->
-            <button id="playPause">&#9654;</button> <!-- Icono de reproducir/pausar -->
-            <button id="nextSong">&#9654;</button> <!-- Icono de siguiente -->
-        </div>
-        <div id="time">0:00</div>
-        <button id="closePlayer">X</button>
+    <div id="formulario">
+        <h2>PRESUME TU MUSICA</h2>
+        <form action="guardar_musica.php" method="POST">
+            <label for="artista">Nombre del Artista:</label>
+            <input type="text" id="artista" name="artista" required><br><br>
+    
+            <label for="titulo">Título de la Canción:</label>
+            <input type="text" id="titulo" name="titulo" required><br><br>
+    
+            <label for="url_audio">URL del Audio:</label>
+            <input type="url" id="url_audio" name="url_audio" required><br><br>
+    
+            <label for="url_portada">URL de la Portada:</label>
+            <input type="url" id="url_portada" name="url_portada" required><br><br>
+    
+            <button type="submit" class="btn-guardar">Guardar</button>
+        </form>
     </div>
 
     <script>
-        const form = document.getElementById('musicForm');
-        const songsList = document.getElementById('songsList');
-        const audioPlayerContainer = document.getElementById('audioPlayerContainer');
-        const audioPlayer = document.getElementById('audioPlayer');
-        const closePlayer = document.getElementById('closePlayer');
-        const prevSong = document.getElementById('prevSong');
-        const nextSong = document.getElementById('nextSong');
-        const playPauseButton = document.getElementById('playPause');
-        const progressBarFilled = document.getElementById('progressBarFilled');
-        const timeDisplay = document.getElementById('time');
+        // Obtener el botón y el formulario
+        const btnFlotante = document.getElementById('btn-flotante');
+        const formulario = document.getElementById('formulario');
 
-        let songList = [];
-        let currentSongIndex = -1;
-
-        // Recuperar canciones almacenadas al cargar la página
-        function loadSongs() {
-            const storedSongs = JSON.parse(localStorage.getItem('songs'));
-            if (storedSongs) {
-                songList = storedSongs;
-                songList.forEach(song => displaySong(song));
-            }
-        }
-
-        // Mostrar una canción en la lista
-        function displaySong(song, index) {
-            const songDiv = document.createElement('div');
-            songDiv.classList.add('song-container');
-
-            const coverImage = document.createElement('img');
-            coverImage.src = song.coverUrl;
-            songDiv.appendChild(coverImage);
-
-            const songInfo = document.createElement('div');
-            songInfo.classList.add('song-info');
-            songInfo.innerHTML = `<strong>${song.songTitle}</strong> - ${song.artist}`;
-
-            const playButton = document.createElement('button');
-            playButton.textContent = 'Escuchar';
-            playButton.onclick = function() {
-                openPlayer(song.songUrl);
-            };
-            songInfo.appendChild(playButton);
-
-            // Botón de eliminación
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Eliminar';
-            deleteButton.onclick = function() {
-                deleteSong(index);
-            };
-            songInfo.appendChild(deleteButton);
-
-            songDiv.appendChild(songInfo);
-            songsList.appendChild(songDiv);
-        }
-
-        // Abrir el reproductor flotante
-        function openPlayer(songUrl) {
-            const audioSource = document.getElementById('audioSource');
-            audioSource.src = songUrl;
-            audioPlayer.load();
-            audioPlayer.play();  // Reproducir automáticamente
-            audioPlayerContainer.style.display = 'flex';
-            audioPlayerContainer.classList.remove('fadeOut');
-            audioPlayerContainer.classList.add('fadeIn');
-
-            // Buscar la canción en la lista para establecer el índice actual
-            currentSongIndex = songList.findIndex(song => song.songUrl === songUrl);
-
-            // Actualizar la barra de progreso y el tiempo mientras se reproduce
-            updateProgress();
-        }
-
-        // Cerrar el reproductor flotante
-        closePlayer.onclick = function() {
-            audioPlayer.pause();
-            audioPlayerContainer.classList.remove('fadeIn');
-            audioPlayerContainer.classList.add('fadeOut');
-            setTimeout(() => {
-                audioPlayerContainer.style.display = 'none';
-            }, 500); // Esperar a que termine la animación de salida
-        };
-
-        // Reproducir la canción siguiente
-        nextSong.onclick = function() {
-            if (currentSongIndex < songList.length - 1) {
-                currentSongIndex++;
-                openPlayer(songList[currentSongIndex].songUrl);
-            }
-        };
-
-        // Reproducir la canción anterior
-        prevSong.onclick = function() {
-            if (currentSongIndex > 0) {
-                currentSongIndex--;
-                openPlayer(songList[currentSongIndex].songUrl);
-            }
-        };
-
-        // Reproducir o pausar la canción
-        playPauseButton.onclick = function() {
-            if (audioPlayer.paused) {
-                audioPlayer.play();
-                playPauseButton.innerHTML = "&#10074;&#10074;"; // Icono de pausa
-            } else {
-                audioPlayer.pause();
-                playPauseButton.innerHTML = "&#9654;"; // Icono de play
-            }
-        };
-
-        // Actualizar la barra de progreso y el tiempo
-        function updateProgress() {
-            audioPlayer.addEventListener('timeupdate', function() {
-                const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-                progressBarFilled.style.width = progress + '%';
-
-                const seconds = Math.floor(audioPlayer.currentTime % 60);
-                const minutes = Math.floor(audioPlayer.currentTime / 60);
-                timeDisplay.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-            });
-        }
-
-        // Cargar canciones almacenadas al inicio
-        loadSongs();
+        // Añadir el evento click al botón flotante
+        btnFlotante.addEventListener('click', function() {
+            formulario.classList.toggle('visible'); // Toggle la visibilidad del formulario
+        });
     </script>
+
 </body>
 </html>
