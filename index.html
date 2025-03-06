@@ -15,18 +15,57 @@
             flex-direction: column;
             text-align: center;
         }
+
         form {
             background: white;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
         input {
             margin-top: 10px;
             padding: 8px;
             width: 100%;
             box-sizing: border-box;
+            transition: box-shadow 0.3s ease;
         }
+
+        input:focus {
+            outline: none;
+            animation: glow 0.5s ease-out infinite alternate;
+        }
+
+        @keyframes glow {
+            0% {
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            }
+            100% {
+                box-shadow: 0 0 15px rgba(0, 123, 255, 1);
+            }
+        }
+
+        @keyframes titleAnimation {
+            0% {
+                transform: scale(1);
+                color: #007BFF;
+            }
+            50% {
+                transform: scale(1.2);
+                color: #28a745;
+            }
+            100% {
+                transform: scale(1);
+                color: #007BFF;
+            }
+        }
+
+        label {
+            font-size: 1.2rem;
+            font-weight: bold;
+            animation: titleAnimation 2s infinite;
+        }
+
         button {
             margin-top: 10px;
             padding: 10px;
@@ -37,20 +76,23 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
         button:hover {
             background: #0056b3;
         }
+
         .limpiar {
             background: #dc3545;
-            padding: 5px 15px; /* Tamaño reducido */
-            width: auto; /* No ocupa todo el ancho */
-            margin: 20px auto; /* Centrado horizontal */
-            display: block; /* Hace que el botón sea un bloque */
+            padding: 5px 15px;
+            width: auto;
+            margin: 20px auto;
+            display: block;
         }
+
         .limpiar:hover {
             background: #c82333;
         }
-        /* Estilos para la notificación flotante */
+
         .notificacion {
             position: fixed;
             bottom: 20px;
@@ -63,6 +105,71 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
             display: none;
         }
+
+        .eliminar {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .eliminar:hover {
+            background: #c82333;
+        }
+
+        /* Estilo para la ventana modal */
+#opcionesEliminar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.modalContent {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 300px;
+    max-height: 70vh; /* Establece la altura máxima del contenedor */
+    overflow-y: auto; /* Permite el desplazamiento vertical */
+    scrollbar-width: thin; /* Cambia el tamaño de la barra de desplazamiento */
+    scrollbar-color: #007bff #f0f0f0; /* Cambia el color del deslizable */
+}
+
+/* Para navegadores Webkit (como Chrome, Safari) */
+.modalContent::-webkit-scrollbar {
+    width: 8px; /* Ancho del deslizable */
+}
+
+.modalContent::-webkit-scrollbar-thumb {
+    background-color: #007bff; /* Color del deslizable */
+    border-radius: 4px; /* Bordes redondeados */
+}
+
+.modalContent::-webkit-scrollbar-track {
+    background-color: #f0f0f0; /* Color del fondo del deslizable */
+}
+
+        /* Estilo para el contenedor del historial */
+        #datosGuardados {
+            margin-top: 20px;
+            max-height: 200px; /* Altura máxima para el área de desplazamiento */
+            overflow-y: auto; /* Desplazamiento vertical */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 80%;
+            margin: 20px auto;
+        }
+
     </style>
 </head>
 <body>
@@ -76,10 +183,19 @@
         <!-- Aquí se mostrarán los datos guardados -->
     </div>
 
-    <button class="limpiar" onclick="limpiarHistorial()">Limpiar Historial</button>
+    <button class="limpiar" onclick="mostrarOpcionesEliminar()">Limpiar Historial</button>
 
     <div id="notificacion" class="notificacion">
         ¡Se guardó con éxito!
+    </div>
+
+    <!-- Ventana modal para eliminar -->
+    <div id="opcionesEliminar">
+        <div class="modalContent">
+            <p>Seleccione el nombre que desea eliminar:</p>
+            <div id="listaNombres"></div>
+            <button onclick="cerrarVentanaEliminar()">Cerrar</button>
+        </div>
     </div>
 
     <script>
@@ -88,39 +204,25 @@
             var nombre = document.getElementById('nombre').value;
 
             if (nombre) {
-                // Recuperamos el historial de nombres (si existe) o inicializamos un array vacío
                 var historial = JSON.parse(localStorage.getItem('historial')) || [];
-                // Agregamos el nuevo nombre al inicio del historial
-                historial.unshift(nombre); // Cambié 'push' por 'unshift'
-                // Guardamos el historial actualizado en localStorage
+                historial.unshift(nombre); 
                 localStorage.setItem('historial', JSON.stringify(historial));
 
-                // Mostrar la notificación flotante
                 var notificacion = document.getElementById('notificacion');
                 notificacion.style.display = 'block';
 
-                // Ocultar la notificación después de 3 segundos
                 setTimeout(function() {
                     notificacion.style.display = 'none';
                 }, 3000);
 
-                // Mostrar el historial actualizado
                 mostrarDatos();
 
-                // Limpiar el formulario
                 document.getElementById('nombre').value = '';
             } else {
                 alert('Por favor, ingresa tu nombre.');
             }
         }
 
-        // Función para limpiar el historial
-        function limpiarHistorial() {
-            localStorage.removeItem('historial');
-            mostrarDatos(); // Actualizamos la visualización del historial
-        }
-
-        // Función para mostrar los datos guardados
         function mostrarDatos() {
             var historial = JSON.parse(localStorage.getItem('historial')) || [];
             var datosDiv = document.getElementById('datosGuardados');
@@ -136,7 +238,35 @@
             }
         }
 
-        // Mostrar los datos guardados si ya existen al cargar la página
+        function mostrarOpcionesEliminar() {
+            var historial = JSON.parse(localStorage.getItem('historial')) || [];
+            var opcionesDiv = document.getElementById('opcionesEliminar');
+            var listaNombres = document.getElementById('listaNombres');
+
+            if (historial.length > 0) {
+                var lista = '';
+                historial.forEach(function(nombre, index) {
+                    lista += `<button class="eliminar" onclick="eliminarNombre(${index})">${nombre}</button><br>`;
+                });
+                listaNombres.innerHTML = lista;
+                opcionesDiv.style.display = 'flex';
+            } else {
+                alert('No hay nombres guardados para eliminar.');
+            }
+        }
+
+        function eliminarNombre(index) {
+            var historial = JSON.parse(localStorage.getItem('historial')) || [];
+            historial.splice(index, 1); // Eliminar el nombre por su índice
+            localStorage.setItem('historial', JSON.stringify(historial));
+            mostrarDatos(); // Actualizar la lista de nombres
+            cerrarVentanaEliminar(); // Cerrar la ventana modal
+        }
+
+        function cerrarVentanaEliminar() {
+            document.getElementById('opcionesEliminar').style.display = 'none'; // Ocultar la ventana modal
+        }
+
         window.onload = mostrarDatos;
     </script>
 </body>
