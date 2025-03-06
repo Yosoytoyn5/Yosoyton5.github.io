@@ -6,7 +6,7 @@
     <title>Subir Música</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
@@ -55,137 +55,121 @@
             background-color: #45a049;
         }
 
-        .song-container {
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            border: 1px solid #ccc;
-            padding: 10px;
-            width: 100%;
-            flex-wrap: wrap;
-        }
-
-        .song-container img {
-            width: 100%;
-            height: auto;
-            max-width: 200px;
-            margin-right: 15px;
-        }
-
-        .song-container .song-info {
-            flex: 1;
-            padding-right: 20px;
-        }
-
-        .song-container button {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #050505;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .song-container button:hover {
-            background-color: #45a049;
-        }
-
-        /* Reproductor de música flotante */
+        /* Reproductor de música flotante moderno */
         #audioPlayerContainer {
             position: fixed;
             bottom: 20px;
             right: 20px;
             background-color: rgba(0, 0, 0, 0.8);
-            padding: 10px;
-            border-radius: 5px;
+            padding: 15px;
+            border-radius: 10px;
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 1000;
+            width: 320px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
         #audioPlayerContainer audio {
             width: 100%;
-            max-width: 300px;
+            border-radius: 10px;
         }
 
-        #audioPlayerContainer button {
-            background-color: red;
-            border-radius: 50%;
-            padding: 5px;
-            margin-left: 10px;
-            cursor: pointer;
+        #audioPlayerContainer .controls {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            align-items: center;
+            margin-top: 10px;
         }
 
-        #audioPlayerContainer button:hover {
-            background-color: darkred;
-        }
-
-        /* Botones de siguiente y regresar */
-        .player-controls button {
+        #audioPlayerContainer .controls button {
             background-color: transparent;
             border: none;
-            font-size: 20px;
-            color: white;
+            color: rgb(226, 38, 38);
+            font-size: 18px;
             cursor: pointer;
-            margin: 0 5px;
+            transition: color 0.3s ease;
         }
 
-        .player-controls button:hover {
+        #audioPlayerContainer .controls button:hover {
             color: #45a049;
+        }
+
+        #progressBar {
+            width: 100%;
+            height: 5px;
+            background-color: #555;
+            margin-top: 5px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        #progressBarFilled {
+            height: 100%;
+            background-color: #45a049;
+            width: 0%;
+        }
+
+        #time {
+            color: white;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        #closePlayer {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: transparent;
+            border: none;
+            color: rgb(177, 78, 78);
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        #closePlayer:hover {
+            color: #e74c3c;
+        }
+
+        /* Transiciones y efectos */
+        #audioPlayerContainer.fadeIn {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        #audioPlayerContainer.fadeOut {
+            animation: fadeOut 0.5s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(20px);
+            }
         }
 
         /* Media Queries */
         @media (max-width: 768px) {
-            .song-container {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .song-container img {
-                width: 100%;
-                max-width: 150px;
-                margin-right: 0;
-                margin-bottom: 10px;
-            }
-
-            .song-container .song-info {
-                flex: none;
-                width: 100%;
-            }
-
-            form input {
-                padding: 8px;
-            }
-
-            form button {
-                padding: 10px;
-            }
-
             #audioPlayerContainer {
                 width: 100%;
                 bottom: 10px;
                 right: 10px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            form {
-                padding: 15px;
-            }
-
-            form input {
-                padding: 8px;
-            }
-
-            .song-container button {
-                font-size: 12px;
-            }
-
-            .song-container img {
-                max-width: 120px;
             }
         }
     </style>
@@ -212,14 +196,19 @@
 
     <!-- Reproductor de música flotante -->
     <div id="audioPlayerContainer">
-        <div class="player-controls">
-            <button id="prevSong">&#9664;</button> <!-- Icono de regresar -->
-            <button id="nextSong">&#9654;</button> <!-- Icono de siguiente -->
-        </div>
         <audio id="audioPlayer" controls>
             <source id="audioSource" src="" type="audio/mpeg">
             Tu navegador no soporta el elemento de audio.
         </audio>
+        <div id="progressBar">
+            <div id="progressBarFilled"></div>
+        </div>
+        <div class="controls">
+            <button id="prevSong">&#9664;</button> <!-- Icono de regresar -->
+            <button id="playPause">&#9654;</button> <!-- Icono de reproducir/pausar -->
+            <button id="nextSong">&#9654;</button> <!-- Icono de siguiente -->
+        </div>
+        <div id="time">0:00</div>
         <button id="closePlayer">X</button>
     </div>
 
@@ -231,6 +220,9 @@
         const closePlayer = document.getElementById('closePlayer');
         const prevSong = document.getElementById('prevSong');
         const nextSong = document.getElementById('nextSong');
+        const playPauseButton = document.getElementById('playPause');
+        const progressBarFilled = document.getElementById('progressBarFilled');
+        const timeDisplay = document.getElementById('time');
 
         let songList = [];
         let currentSongIndex = -1;
@@ -277,22 +269,30 @@
         }
 
         // Abrir el reproductor flotante
-function openPlayer(songUrl) {
-    const audioSource = document.getElementById('audioSource');
-    audioSource.src = songUrl;
-    audioPlayer.load();
-    audioPlayer.play();  // Reproducir automáticamente
-    audioPlayerContainer.style.display = 'flex';
+        function openPlayer(songUrl) {
+            const audioSource = document.getElementById('audioSource');
+            audioSource.src = songUrl;
+            audioPlayer.load();
+            audioPlayer.play();  // Reproducir automáticamente
+            audioPlayerContainer.style.display = 'flex';
+            audioPlayerContainer.classList.remove('fadeOut');
+            audioPlayerContainer.classList.add('fadeIn');
 
-    // Buscar la canción en la lista para establecer el índice actual
-    currentSongIndex = songList.findIndex(song => song.songUrl === songUrl);
-}
+            // Buscar la canción en la lista para establecer el índice actual
+            currentSongIndex = songList.findIndex(song => song.songUrl === songUrl);
 
+            // Actualizar la barra de progreso y el tiempo mientras se reproduce
+            updateProgress();
+        }
 
         // Cerrar el reproductor flotante
         closePlayer.onclick = function() {
             audioPlayer.pause();
-            audioPlayerContainer.style.display = 'none';
+            audioPlayerContainer.classList.remove('fadeIn');
+            audioPlayerContainer.classList.add('fadeOut');
+            setTimeout(() => {
+                audioPlayerContainer.style.display = 'none';
+            }, 500); // Esperar a que termine la animación de salida
         };
 
         // Reproducir la canción siguiente
@@ -311,38 +311,28 @@ function openPlayer(songUrl) {
             }
         };
 
-        // Función para eliminar una canción
-        function deleteSong(index) {
-            songList.splice(index, 1); // Eliminar de la lista
-            localStorage.setItem('songs', JSON.stringify(songList)); // Actualizar localStorage
-            songsList.innerHTML = ''; // Limpiar la lista de canciones
-            songList.forEach((song, i) => displaySong(song, i)); // Volver a mostrar las canciones actualizadas
+        // Reproducir o pausar la canción
+        playPauseButton.onclick = function() {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                playPauseButton.innerHTML = "&#10074;&#10074;"; // Icono de pausa
+            } else {
+                audioPlayer.pause();
+                playPauseButton.innerHTML = "&#9654;"; // Icono de play
+            }
+        };
+
+        // Actualizar la barra de progreso y el tiempo
+        function updateProgress() {
+            audioPlayer.addEventListener('timeupdate', function() {
+                const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                progressBarFilled.style.width = progress + '%';
+
+                const seconds = Math.floor(audioPlayer.currentTime % 60);
+                const minutes = Math.floor(audioPlayer.currentTime / 60);
+                timeDisplay.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+            });
         }
-
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const artist = document.getElementById('artist').value;
-            const songTitle = document.getElementById('songTitle').value;
-            const songUrl = document.getElementById('songUrl').value;
-            const coverUrl = document.getElementById('coverUrl').value;
-
-            const song = {
-                artist,
-                songTitle,
-                songUrl,
-                coverUrl
-            };
-
-            // Guardar la canción en localStorage
-            songList.push(song);
-            localStorage.setItem('songs', JSON.stringify(songList));
-
-            // Mostrar la canción
-            displaySong(song, songList.length - 1);
-
-            form.reset(); // Limpiar el formulario
-        });
 
         // Cargar canciones almacenadas al inicio
         loadSongs();
