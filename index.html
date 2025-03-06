@@ -84,37 +84,35 @@
 
     <script>
         // Función para guardar los datos en localStorage
-function guardar() {
-    var nombre = document.getElementById('nombre').value;
+        function guardar() {
+            var nombre = document.getElementById('nombre').value;
 
-    if (nombre) {
-        // Recuperamos el historial de nombres (si existe) o inicializamos un array vacío
-        var historial = JSON.parse(localStorage.getItem('historial')) || [];
-        // Agregamos el nuevo nombre al inicio del historial
-        historial.unshift(nombre); // Cambié 'push' por 'unshift'
-        // Guardamos el historial actualizado en localStorage
-        localStorage.setItem('historial', JSON.stringify(historial));
+            if (nombre) {
+                // Recuperamos el historial de nombres (si existe) o inicializamos un array vacío
+                var historial = JSON.parse(localStorage.getItem('historial')) || [];
+                // Agregamos el nuevo nombre al inicio del historial
+                historial.unshift(nombre); // Cambié 'push' por 'unshift'
+                // Guardamos el historial actualizado en localStorage
+                localStorage.setItem('historial', JSON.stringify(historial));
 
-        // Mostrar la notificación flotante
-        var notificacion = document.getElementById('notificacion');
-        notificacion.style.display = 'block';
+                // Mostrar la notificación flotante
+                var notificacion = document.getElementById('notificacion');
+                notificacion.style.display = 'block';
 
-        // Ocultar la notificación después de 3 segundos
-        setTimeout(function() {
-            notificacion.style.display = 'none';
-        }, 3000);
+                // Ocultar la notificación después de 3 segundos
+                setTimeout(function() {
+                    notificacion.style.display = 'none';
+                }, 3000);
 
-        // Mostrar el historial actualizado
-        mostrarDatos();
+                // Mostrar el historial actualizado
+                mostrarDatos();
 
-        // Limpiar el formulario
-        document.getElementById('nombre').value = '';
-    } else {
-        alert('Por favor, ingresa tu nombre.');
-    }
-}
-
-
+                // Limpiar el formulario
+                document.getElementById('nombre').value = '';
+            } else {
+                alert('Por favor, ingresa tu nombre.');
+            }
+        }
 
         // Función para limpiar el historial
         function limpiarHistorial() {
