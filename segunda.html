@@ -4,111 +4,246 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reproductor de Música</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/node-vibrant/3.1.6/vibrant.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #d11818;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
+            background-color: #282c34;
+            color: white;
+            transition: background-color 0.5s ease;
+            flex-direction: column;
         }
-        .audio-container {
-            background: #8d4949;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        .player {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 320px;
-            display: none; /* Inicialmente oculto */
-        }
-        .play-btn {
-            width: 200px; /* Tamaño de la portada */
-            height: 200px; /* Tamaño de la portada */
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-6ihTplHTFbwKX5SPZ4FcTtBwMeOVT7-anbdumB-lx-1wjDhOd-C5pKYp0nPvV6_qZjQ&usqp=CAU');
-            background-size: cover;
-            background-position: center;
-            position: absolute; /* Para que esté en la esquina */
-            top: 20px; /* Ajusta la distancia desde la parte superior */
-            left: 20px; /* Ajusta la distancia desde la parte izquierda */
-        }
-        .progress-container {
-            width: 100%;
-            margin-top: 10px;
-        }
-        .progress {
-            width: 100%;
-            height: 5px;
-            border-radius: 5px;
-            background-color: #fafafa;
-        }
-        .progress-bar {
-            height: 100%;
-            width: 0;
-            background-color: #4CAF50;
-            border-radius: 5px;
-        }
-        .song-info {
-            margin-top: 10px;
             text-align: center;
         }
-        .song-info h3, .song-info p {
-            margin: 0;
-        }
-    </style>
-</head>
-<body>
-    <button id="sainNtBtn" class="play-btn" onclick="showPlayer()"> </button> <!-- Ahora es una imagen de portada -->
 
-    <div class="audio-container" id="audioContainer">
-        <div class="album-cover"></div>
-        <button id="playPauseBtn" class="play-btn" onclick="togglePlayPause()">Reproducir</button>
-        <div class="progress-container">
-            <div class="progress">
-                <div id="progress-bar" class="progress-bar"></div>
-            </div>
-        </div>
-        <div class="song-info">
-            <h3>Sain Nt</h3>
-            <p>Oye Bebe</p>
-        </div>
-    </div>
-
-    <script>
-        let audio = new Audio('https://www.cjoint.com/doc/24_10/NJAsIFmkU1f_Oye-bebe-Sain-Nt-Kerim-Music.mp3');
-        const progressBar = document.getElementById('progress-bar');
-        const playPauseBtn = document.getElementById('playPauseBtn');
-        const audioContainer = document.getElementById('audioContainer');
-        const sainNtBtn = document.getElementById('sainNtBtn');
-
-        // Función para mostrar el reproductor y ocultar la portada
-        function showPlayer() {
-            audioContainer.style.display = 'flex'; // Mostrar el reproductor
-            sainNtBtn.style.display = 'none'; // Ocultar la portada
-        }
-
-        // Función para alternar entre reproducir y pausar
-        function togglePlayPause() {
-            if (audio.paused) {
-                audio.play();
-                playPauseBtn.textContent = "Pausar";
-            } else {
-                audio.pause();
-                playPauseBtn.textContent = "Reproducir";
+        /* Animación para la portada */
+        @keyframes fadeInScale {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
             }
         }
 
-        audio.addEventListener('timeupdate', () => {
-            const progress = (audio.currentTime / audio.duration) * 100;
-            progressBar.style.width = progress + '%';
-        });
+        .cover {
+            width: 300px;
+            height: 300px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            align-self: center;
+            animation: fadeInScale 1.5s ease-out;  /* Añadimos la animación aquí */
+        }
+
+        .controls button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            margin: 15px;
+        }
+        .progress-container {
+            width: 100%;
+            background: #666;
+            height: 5px;
+            border-radius: 5px;
+            margin: 10px 0;
+            cursor: pointer;
+            position: relative;
+        }
+        .progress-bar {
+            height: 5px;
+            background: #fbfffd;
+            width: 0;
+            border-radius: 5px;
+        }
+        .time {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+        }
+        .shuffle-btn {
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-transform: uppercase;
+}
+
+        .search-bar {
+            margin: 20px;
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            border-radius: 5px;
+            border: 2px solid white;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            outline: none;
+            transition: all 0.3s ease;
+            display: none;  /* Inicialmente oculto */
+        }
+        .search-bar:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #f3f3f3;
+            box-shadow: 0 0 10px rgba(29, 185, 84, 0.7);
+        }
+       
+    </style>
+</head>
+<body>
+    
+    <div class="player">
+        <img id="cover" class="cover" src="https://via.placeholder.com/200" alt="Portada del álbum">
+        <h2 id="song-title">Título de la Canción</h2>
+        <audio id="audio"></audio>
+        <div class="time">
+            <span id="current-time">0:00</span>
+            <span id="total-duration">0:00</span>
+        </div>
+        <div class="progress-container" onclick="setProgress(event)">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <div class="controls">
+            <button onclick="prevSong()">⏮</button>
+            <button id="play-pause-btn" onclick="togglePlayPause()">▶</button>
+            <button onclick="nextSong()">⏭</button>
+        </div>
+        <button class="shuffle-btn" onclick="toggleShuffle()">Shuffle</button>
+
+    </div>
+
+    <script>
+        const audio = document.getElementById('audio');
+        const cover = document.getElementById('cover');
+        const title = document.getElementById('song-title');
+        const progressBar = document.getElementById('progress-bar');
+        const progressContainer = document.querySelector('.progress-container');
+        const currentTimeEl = document.getElementById('current-time');
+        const totalDurationEl = document.getElementById('total-duration');
+        const shuffleBtn = document.querySelector('.shuffle-btn');
+        
+        const songs = [
+            { title: "Oye Bebe, Sain Nt", src: "https://www.cjoint.com/doc/24_10/NJAsIFmkU1f_Oye-bebe-Sain-Nt-Kerim-Music.mp3", cover: "https://scontent.fbjx1-3.fna.fbcdn.net/v/t39.30808-6/469294442_122180763968093529_2318484554560596288_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=-MaUV3J70FMQ7kNvgG_cU4l&_nc_oc=AdjB6i5ED_wG4-0J3xzWN4Rzjbx_WkB_TJHHCKVy7Q8dmoQb1LtqDxDjV9cWwVnprjcdumifCqLAKtA2SSkAqYmQ&_nc_zt=23&_nc_ht=scontent.fbjx1-3.fna&_nc_gid=APf6pY0wNfPwlJN8c-SybBv&oh=00_AYEI0KepHazWRJvxn6mKAt_BILSfX1YvYrJzDi07RgWc-A&oe=67CFF5BF" },
+            { title: "Ya vienen los reyes magos, keim Music", src: "https://www.cjoint.com/doc/25_01/OAduLjDAM2S_Ya-Vienen-Los-Reyes-Magos.mp3", cover: "https://scontent.fbjx1-1.fna.fbcdn.net/v/t39.30808-6/481903517_122195213156093529_7678889840714831711_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=127cfc&_nc_ohc=HFw3IXKmleEQ7kNvgFqIZKT&_nc_oc=Adi_oVwMUaGUSKZrhUz2naWBYPl-8FvPT_2Rp2jLbjc4V6R7cbFz1G4yg90DusPnh_I4P5WoxUmKBZTOf2iKxHij&_nc_zt=23&_nc_ht=scontent.fbjx1-1.fna&_nc_gid=AqdzoaMY16rHf8pIzEoDZpY&oh=00_AYHdR0XOKl9gBc5ZlPCn4h-cEMjQ_UI8hjhKIen0dsDANw&oe=67D02A9F" },
+            { title: "Ritmos Malandros, Onder King", src: "https://www.cjoint.com/doc/24_11/NKdtiAEbJfQ_3-Ritmos-malandros-Odner-King.mp3", cover: "https://scontent.fbjx1-3.fna.fbcdn.net/v/t39.30808-6/469209732_122180763320093529_1738609717332775298_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=RZ8sTAEMKLYQ7kNvgGOa-vg&_nc_oc=AdhLkzHHSZ9OMjB9MOpvJo-syDUCUVnfbGEni8hzVsSPHE8XzMqpUoU0FGtG-F0s-ZuOBp7us1v9ZcNyZoTrTIUj&_nc_zt=23&_nc_ht=scontent.fbjx1-3.fna&_nc_gid=AjeS_X_I7O-NMjZ9--FCOmO&oh=00_AYFegrh5xp5j1v5RdvIAtHCes5OuYrIBr1Mca1d-c2BDUw&oe=67D00434" },
+            { title: "Modo avion, Dany Zm", src: "https://www.cjoint.com/doc/24_11/NKdtvXSFvdQ_1-Modo-avion-Dany-Zm-El-rencuentro-flac.mp3", cover: "https://scontent.fbjx1-1.fna.fbcdn.net/v/t39.30808-6/469526904_122180756942093529_4545572876628752884_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=833d8c&_nc_ohc=_zFJ3-wgZXEQ7kNvgG9UHR8&_nc_oc=AdhkgtJQnagYHt-xFYwaO6mNRWmneH-HolT02rkEUVqgireF70H09EmGL7D2g9jguCgfNTBsn8N2cIhU3NZhQ-5j&_nc_zt=23&_nc_ht=scontent.fbjx1-1.fna&_nc_gid=AZnflSBwn6dKB_vC1IiPJBy&oh=00_AYEU7gaRQlz7cw7GNtzn4KLAkoBo2kNcN4ZsdDJD5oEIRQ&oe=67CFF329" },
+            { title: "Me estoy muriendo, Clave 462", src: "https://www.cjoint.com/doc/24_11/NKgbdc5rOko_Me-estoy-muriendo-clave-462.mp3", cover: "https://scontent.fbjx1-1.fna.fbcdn.net/v/t39.30808-6/483488957_122195212382093529_2576876991791910487_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=127cfc&_nc_ohc=oVcE2hGGuF8Q7kNvgEtVE-T&_nc_oc=Adg3lt1F2_-gz0yf6IlPWF9kE-CopZoQ4dG8xbMAlackBwpqfUVBfB6ZAWGDCsqp2ngg7aWzwLS0dM5VNd5Ai2sH&_nc_zt=23&_nc_ht=scontent.fbjx1-1.fna&_nc_gid=ALUPZhj5JNB7Zl5023MMSjm&oh=00_AYHhG40crHMCDFJxFwG6U-_M5eTaEoZKpemvC_D1KYRjSQ&oe=67D02C03" },
+        ];
+        
+        let currentSongIndex = 0;
+        let shuffle = false;
+        
+        function updatePlayer() {
+            audio.src = songs[currentSongIndex].src;
+            cover.src = songs[currentSongIndex].cover;
+            title.textContent = songs[currentSongIndex].title;
+            audio.load();
+            audio.play().catch(error => console.log("Autoplay bloqueado: ", error));
+            updateBackgroundColor();
+        }
+
+        function updateBackgroundColor() {
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.src = songs[currentSongIndex].cover;
+        
+            img.onload = () => {
+                Vibrant.from(img).getPalette().then(palette => {
+                    if (palette.DarkVibrant) {
+                        document.body.style.backgroundColor = palette.DarkVibrant.hex;
+                    } else if (palette.Vibrant) {
+                        document.body.style.backgroundColor = palette.Vibrant.hex;
+                    }
+                });
+            };
+        }
+
+        function togglePlayPause() {
+    const playPauseButton = document.getElementById('play-pause-btn'); 
+    if (audio.paused) {
+        audio.play();
+    } else {
+        audio.pause();
+    }
+}
+
+// Aseguramos que el botón se actualice cuando el audio cambia de estado
+audio.addEventListener('pause', () => {
+    document.getElementById('play-pause-btn').textContent = '⏸';
+});
+
+audio.addEventListener('play', () => {
+    document.getElementById('play-pause-btn').textContent = '▶';
+});
+
+
+
+        
+        function nextSong() {
+            if (shuffle) {
+                currentSongIndex = Math.floor(Math.random() * songs.length);
+            } else {
+                currentSongIndex = (currentSongIndex + 1) % songs.length;
+            }
+            updatePlayer();
+        }
+
+        function prevSong() {
+            if (shuffle) {
+                currentSongIndex = Math.floor(Math.random() * songs.length);
+            } else {
+                currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            }
+            updatePlayer();
+        }
+
+        function updateProgress() {
+            const { duration, currentTime } = audio;
+            const progressPercent = (currentTime / duration) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+            currentTimeEl.textContent = formatTime(currentTime);
+            totalDurationEl.textContent = formatTime(duration);
+        }
+        
+        function setProgress(event) {
+            const width = progressContainer.clientWidth;
+            const clickX = event.offsetX;
+            const duration = audio.duration;
+            audio.currentTime = (clickX / width) * duration;
+        }
+
+        function formatTime(time) {
+            const minutes = Math.floor(time / 60);
+            const seconds = Math.floor(time % 60);
+            return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+    
+        function toggleShuffle() {
+            shuffle = !shuffle;
+            shuffleBtn.textContent = shuffle ? "🔁" : "🔀";
+        }
+        
+        audio.addEventListener('timeupdate', updateProgress);
+        audio.addEventListener('loadedmetadata', updateProgress);
+        audio.addEventListener('ended', nextSong);
+    
+        shuffle = true;
+        shuffleBtn.textContent = "🔁";
+        currentSongIndex = Math.floor(Math.random() * songs.length);
+        updatePlayer();
     </script>
+    
 </body>
 </html>
